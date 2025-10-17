@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>多项目计算器</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    input { width: 80px; padding: 4px; text-align: center; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 16px; }
+    .result-cell { background-color: #f0f8ff; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>多项目参数计算表</h2>
+  <table id="calcTable">
+    <thead>
+      <tr>
+        <th>参数/结果</th>
+        <!-- 项目列头将由 JS 动态填充 -->
+      </tr>
+    </thead>
+    <tbody>
+      <!-- 输入行 -->
+      <tr><td>参数1</td></tr>
+      <tr><td>参数2</td></tr>
+      <tr><td>参数3</td></tr>
+      <tr><td>参数4</td></tr>
+      <tr><td>参数5</td></tr>
+      <tr><td>参数6</td></tr>
+      <!-- 结果行 -->
+      <tr><td>结果1</td></tr>
+      <tr><td>结果2</td></tr>
+    </tbody>
+  </table>
+
+  <button onclick="calculateAll()">计算所有项目</button>
+
+  <script>
+    // 项目配置：从后端获取 or 写死（这里写死简化）
+    const PROJECTS = {
+      "project_alpha": "项目 Alpha",
+      "project_beta": "项目 Beta",
+      "project_gamma": "项目 Gamma"
+    };
+
+    // 初始化表格
+    function initTable() {
+      const thead = document.querySelector('#calcTable thead tr');
+      const tbody = document.querySelector('#calcTable tbody');
+
+      // 添加项目列头
+      Object.values(PROJECTS).forEach(name => {
+        const th = document.createElement('th');
+        th.textContent = name;
+        thead.appendChild(th);
+      });
+
+      // 为每一行添加单元格
+      const rows = tbody.querySelectorAll('tr');
+      rows.forEach((row, rowIndex) => {
+        Object.keys(PROJECTS).forEach(projId => {
+          const cell = document.createElement('td');
+          if (rowIndex < 6) {
+            // 输入行：放输入框
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.step = '0.01';
+            input.dataset.proj = projId;
+            input.dataset.row = rowIndex;
+            cell.appendChild(input);
+          } else {
+            // 结果行：留空，后续填充
+            cell.classList.add('result-cell');
+            cell.id = `result-${projId}-${rowIndex - 6}`;
+          }
+          row.appendChild(cell);
+        });
+      });
+    }
+
+    // 收集输入并提交计算
+    async function calculateAll() {
+      const inputs = {};
+      Object.keys(PROJECTS).forEach(projId => {
+        inputs[projId] = [];
+        for (let i = 0; i < 6; i++) {
+          const input = document.querySelector(`input[data-proj="${projId}"][data-row="${i}"]`);
+          const val = parseFloat(input.value);
+          inputs[projId].push(isNaN(val) ? 0 : val);
+        }
+      });
+
+      try {
+        const res = await fetch('/api/calculate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ inputs })
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          alert('错误: ' + data.error);
+          return;
+        }
+
+        // 填充结果
+        Object.entries(data.results).forEach(([projId, results]) => {
+          results.forEach((value, idx) => {
+            const cell = document.getElementById(`result-${projId}-${idx}`);
+            if (cell) cell.textContent = value;
+          });
+        });
+      } catch (err) {
+        alert('网络错误，请重试');
+      }
+    }
+
+    // 页面加载时初始化
+    window.onload = initTable;
+  </script>
+</body>
+</html>
