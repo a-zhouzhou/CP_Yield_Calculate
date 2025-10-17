@@ -1,5 +1,29 @@
 {
-  "project_tianlonges": "项目 天龙ES",
-  "project_tianlongcs": "项目 天龙CS",
-  "project_tianhe": "项目 天鹤"
+  "project_tianlonges": {
+    "name": "项目 天龙ES",
+    "params": {
+      "logic_defect_density": 0.67,
+      "ram_defect_density": 0.45,
+      "E": 2.718281828,
+      "memory_repair_rate": 0.7
+    }
+  },
+  "project_tianlongcs": {
+    "name": "项目 天龙CS",
+    "params": {
+     "logic_defect_density": 0.67,
+      "ram_defect_density": 0.45,
+      "E": 2.718281828,
+      "memory_repair_rate": 0.7
+    }
+  }
+   "project_tianhe": {
+    "name": "项目 天鹤",
+    "params": {
+      "logic_defect_density": 0.67,
+      "ram_defect_density": 0.45,
+      "E": 2.718281828,
+      "memory_repair_rate": 0.7
+    }
+  }
 }
