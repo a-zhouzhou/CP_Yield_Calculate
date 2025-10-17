@@ -16,20 +16,22 @@ def handler(request):
         for proj_id, values in inputs.items():
             if proj_id not in PROJECT_NAMES:
                 continue
-
+            
             # 解构6个输入值（确保有6个）
             if len(values) != 6:
                 return {"error": f"{proj_id} 需要6个输入值"}
-
+            
             x1, x2, x3, x4, x5, x6 = values
-
+            E=2.718281828
             # 🔒 你的私有公式（示例）
-            result1 = (x1 * 2.5 + x2) * (1 + x3 / 100)  # 可替换为任意逻辑
-            result2 = x4 + x5 * x6
+            digital_defective_rate = 1-E^(-x4*LOGIC_DEFECT_DENSITY)
+            memory_defective_rate = 1-E^(-x5*RAM_DEFECT_DENSITY)
+            CP_YIELD_BEFORE_REPAIR = (x1 * 2.5 + x2) * (1 + x3 / 100)  # 可替换为任意逻辑
+            CP_YIELD_AFTER_REPAIR = (x1 * 2.5 + x2) * (1 + x3 / 100) 
 
             results[proj_id] = [
-                round(result1, 4),
-                round(result2, 2)
+                round(CP_YIELD_BEFORE_REPAIR, 4),
+                round(CP_YIELD_AFTER_REPAIR, 2)
             ]
 
         return {"results": results}
