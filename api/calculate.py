@@ -22,12 +22,13 @@ def handler(request):
                 return {"error": f"{proj_id} 需要6个输入值"}
             
             x1, x2, x3, x4, x5, x6 = values
-            E=2.718281828
+            p = PROJECTS[proj_id]["params"]  # ← 获取该项目的私有参数
+           
             # 🔒 你的私有公式（示例）
-            digital_defective_rate = 1-E^(-x4*LOGIC_DEFECT_DENSITY)
-            memory_defective_rate = 1-E^(-x5*RAM_DEFECT_DENSITY)
-            CP_YIELD_BEFORE_REPAIR = (x1 * 2.5 + x2) * (1 + x3 / 100)  # 可替换为任意逻辑
-            CP_YIELD_AFTER_REPAIR = (x1 * 2.5 + x2) * (1 + x3 / 100) 
+            digital_defective_rate = 1-p["E"]^(-x4*p["LOGIC_DEFECT_DENSITY"])
+            memory_defective_rate = 1-p["E"]^(-x5*p["RAM_DEFECT_DENSITY"])
+            CP_YIELD_BEFORE_REPAIR = 1-digital_defective_rate-memory_defective_rate+(memory_defective_rate*digital_defective_rate)
+            CP_YIELD_AFTER_REPAIR = CP_YIELD_BEFORE_REPAIR+(p["MEMORY_REPAIR_RATE"]*memory_defective_rate)
 
             results[proj_id] = [
                 round(CP_YIELD_BEFORE_REPAIR, 4),
