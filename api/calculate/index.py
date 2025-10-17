@@ -25,10 +25,9 @@ def handler(request):
             p = PROJECTS[proj_id]["params"]  # ← 获取该项目的私有参数
            
             # 🔒 你的私有公式（示例）
-            digital_defective_rate = 1-p["E"]^(-x4*p["LOGIC_DEFECT_DENSITY"])
-            memory_defective_rate = 1-p["E"]^(-x5*p["RAM_DEFECT_DENSITY"])
-            CP_YIELD_BEFORE_REPAIR = 1-digital_defective_rate-memory_defective_rate+(memory_defective_rate*digital_defective_rate)
-            CP_YIELD_AFTER_REPAIR = CP_YIELD_BEFORE_REPAIR+(p["MEMORY_REPAIR_RATE"]*memory_defective_rate)
+            
+            CP_YIELD_BEFORE_REPAIR = 1
+            CP_YIELD_AFTER_REPAIR = 1
 
             results[proj_id] = [
                 round(CP_YIELD_BEFORE_REPAIR, 4),
