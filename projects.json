@@ -2,28 +2,28 @@
   "project_tianlonges": {
     "name": "项目 天龙ES",
     "params": {
-      "logic_defect_density": 0.67,
-      "ram_defect_density": 0.45,
+      "LOGIC_DEFECT_DENSITY": 0.67,
+      "RAM_DEFECT_DENSITY": 0.45,
       "E": 2.718281828,
-      "memory_repair_rate": 0.7
+      "MEMORY_REPAIR_RATE": 0.7
     }
   },
   "project_tianlongcs": {
     "name": "项目 天龙CS",
     "params": {
-     "logic_defect_density": 0.67,
-      "ram_defect_density": 0.45,
+     "LOGIC_DEFECT_DENSITY": 0.67,
+      "RAM_DEFECT_DENSITY": 0.45,
       "E": 2.718281828,
-      "memory_repair_rate": 0.7
+      "MEMORY_REPAIR_RATE": 0.7
     }
   }
    "project_tianhe": {
     "name": "项目 天鹤",
     "params": {
-      "logic_defect_density": 0.67,
-      "ram_defect_density": 0.45,
+      "LOGIC_DEFECT_DENSITY": 0.67,
+      "RAM_DEFECT_DENSITY": 0.45,
       "E": 2.718281828,
-      "memory_repair_rate": 0.7
+      "MEMORY_REPAIR_RATE": 0.7
     }
   }
 }
