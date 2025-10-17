@@ -1,9 +1,9 @@
 {
   "functions": {
-    "api/calculate.py": {
+    "api/calculate/index.py": {
       "runtime": "vercel-python@3.9"
     },
-    "api/projects.py": {
+    "api/projects/index.py": {
       "runtime": "vercel-python@3.9"
     }
   }
