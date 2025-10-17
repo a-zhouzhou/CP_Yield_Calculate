@@ -11,45 +11,50 @@
     input { width: 80px; padding: 4px; text-align: center; }
     button { margin-top: 20px; padding: 10px 20px; font-size: 16px; }
     .result-cell { background-color: #f0f8ff; font-weight: bold; }
+    #loading { color: #666; }
   </style>
 </head>
 <body>
   <h2>多项目参数计算表</h2>
-  <table id="calcTable">
-    <thead>
-      <tr>
-        <th>参数/结果</th>
-        <!-- 项目列头将由 JS 动态填充 -->
-      </tr>
-    </thead>
+  <div id="loading">加载项目中...</div>
+  <table id="calcTable" style="display:none;">
+    <thead><tr><th>参数/结果</th></tr></thead>
     <tbody>
-      <!-- 输入行 -->
       <tr><td>参数1</td></tr>
       <tr><td>参数2</td></tr>
       <tr><td>参数3</td></tr>
       <tr><td>参数4</td></tr>
       <tr><td>参数5</td></tr>
       <tr><td>参数6</td></tr>
-      <!-- 结果行 -->
       <tr><td>结果1</td></tr>
       <tr><td>结果2</td></tr>
     </tbody>
   </table>
-
-  <button onclick="calculateAll()">计算所有项目</button>
+  <button id="calcBtn" style="display:none;" onclick="calculateAll()">计算所有项目</button>
 
   <script>
-    // 项目配置：从后端获取 or 写死（这里写死简化）
-    const PROJECTS = {
-      "project_tianlonges": "项目 天龙ES",
-      "project_tianlongcs": "项目 天龙CS",
-      "project_tianhe": "项目 天鹤"
-    };
+    let PROJECTS = {}; // 动态加载
 
-    // 初始化表格
-    function initTable() {
+    // 1. 从后端获取项目列表
+    async function loadProjects() {
+      try {
+        const res = await fetch('/api/projects');
+        const data = await res.json();
+        PROJECTS = data.projects; // { "proj_id": "项目名" }
+        renderTable();
+      } catch (err) {
+        document.getElementById('loading').textContent = '加载失败，请刷新';
+      }
+    }
+
+    // 2. 动态渲染表格
+    function renderTable() {
       const thead = document.querySelector('#calcTable thead tr');
       const tbody = document.querySelector('#calcTable tbody');
+
+      // 清空可能的旧列（防止重复）
+      thead.querySelectorAll('th:not(:first-child)').forEach(el => el.remove());
+      tbody.querySelectorAll('td').forEach(el => el.remove());
 
       // 添加项目列头
       Object.values(PROJECTS).forEach(name => {
@@ -64,7 +69,6 @@
         Object.keys(PROJECTS).forEach(projId => {
           const cell = document.createElement('td');
           if (rowIndex < 6) {
-            // 输入行：放输入框
             const input = document.createElement('input');
             input.type = 'number';
             input.step = '0.01';
@@ -72,16 +76,20 @@
             input.dataset.row = rowIndex;
             cell.appendChild(input);
           } else {
-            // 结果行：留空，后续填充
             cell.classList.add('result-cell');
             cell.id = `result-${projId}-${rowIndex - 6}`;
           }
           row.appendChild(cell);
         });
       });
+
+      // 显示表格
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('calcTable').style.display = '';
+      document.getElementById('calcBtn').style.display = '';
     }
 
-    // 收集输入并提交计算
+    // 3. 计算函数（不变）
     async function calculateAll() {
       const inputs = {};
       Object.keys(PROJECTS).forEach(projId => {
@@ -106,7 +114,6 @@
           return;
         }
 
-        // 填充结果
         Object.entries(data.results).forEach(([projId, results]) => {
           results.forEach((value, idx) => {
             const cell = document.getElementById(`result-${projId}-${idx}`);
@@ -114,12 +121,13 @@
           });
         });
       } catch (err) {
-        alert('网络错误，请重试');
+        alert('网络错误');
       }
     }
 
-    // 页面加载时初始化
-    window.onload = initTable;
+    // 启动
+    loadProjects();
   </script>
 </body>
 </html>
+ 
